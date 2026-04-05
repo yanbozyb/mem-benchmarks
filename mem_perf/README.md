@@ -20,7 +20,7 @@ make
 ## Standard Bandwidth Run
 
 ```bash
-./mem_perf -a seq -r 100 -t 5 -i 1000 -b 128
+./mem_perf -t 100 -r 100 -i 10000 -a seq
 ```
 
 Arguments:
