@@ -20,14 +20,14 @@ make
 ## Standard Bandwidth Run
 
 ```bash
-./mem_perf -a seq -r 100 -d 5 -i 1000 -b 128
+./mem_perf -a seq -r 100 -t 5 -i 1000 -b 128
 ```
 
 Arguments:
 
 - `--cores` or `-c`: core list, e.g. `0,2,4-7` (default: all available cores)
 - `--read-percent` or `-r`: read ratio `[0,100]` (default: `50`)
-- `--duration` or `-d`: run seconds (default: `10`)
+- `--time` or `-t`: run seconds (default: `10`)
 - `--interval-ms` or `-i`: realtime print interval in ms (default: `1000`)
 - `--buffer-mb` or `-b`: per-thread buffer size in MB (default: `100`)
 - `--access` or `-a`: `random` or `seq` (default: `random`)

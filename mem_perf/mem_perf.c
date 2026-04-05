@@ -52,7 +52,7 @@ static void usage(const char *prog) {
             "Options:\n"
             "  -c, --cores <list>         CPU core list, e.g. 0,2-4,7 (default: all available)\n"
             "  -r, --read-percent <n>     Read ratio [0-100], default 50\n"
-            "  -d, --duration <sec>       Run duration in seconds, default 10\n"
+            "  -t, --time <sec>           Run time in seconds, default 10\n"
             "  -i, --interval-ms <ms>     Realtime print interval in ms, default 1000\n"
             "  -b, --buffer-mb <mb>       Buffer size per thread in MB, default 100\n"
             "  -a, --access <mode>        Access mode: random|seq, default random\n"
@@ -562,7 +562,7 @@ int main(int argc, char **argv) {
     static struct option long_opts[] = {
         {"cores", required_argument, NULL, 'c'},
         {"read-percent", required_argument, NULL, 'r'},
-        {"duration", required_argument, NULL, 'd'},
+        {"time", required_argument, NULL, 't'},
         {"interval-ms", required_argument, NULL, 'i'},
         {"buffer-mb", required_argument, NULL, 'b'},
         {"access", required_argument, NULL, 'a'},
@@ -576,7 +576,7 @@ int main(int argc, char **argv) {
     };
 
     int opt = 0;
-    while ((opt = getopt_long(argc, argv, "c:r:d:i:b:a:LS:p:m:P:h", long_opts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "c:r:t:i:b:a:LS:p:m:P:h", long_opts, NULL)) != -1) {
         switch (opt) {
             case 'c':
                 free(cfg.cores);
@@ -596,10 +596,10 @@ int main(int argc, char **argv) {
                 cfg.read_percent = v;
                 break;
             }
-            case 'd': {
-                int v = parse_nonneg_int(optarg, "duration");
+            case 't': {
+                int v = parse_nonneg_int(optarg, "time");
                 if (v <= 0) {
-                    fprintf(stderr, "--duration/-d must be > 0\n");
+                    fprintf(stderr, "--time/-t must be > 0\n");
                     return 1;
                 }
                 cfg.duration_sec = v;
