@@ -20,7 +20,7 @@ typedef struct __attribute__((aligned(64))) {
     int *cores;
     int num_cores;
     int duration_sec;
-    int interval_ms;
+    int interval_sec;
     int read_percent;
     size_t per_thread_buffer_bytes;
     bool random_access;
@@ -53,7 +53,7 @@ static void usage(const char *prog) {
             "  -c, --cores <list>         CPU core list, e.g. 0,2-4,7 (default: all available)\n"
             "  -r, --read-percent <n>     Read ratio [0-100], default 50\n"
             "  -t, --time <sec>           Run time in seconds, default 10\n"
-            "  -i, --interval-ms <ms>     Realtime print interval in ms, default 1000\n"
+            "  -i, --interval <sec>       Realtime print interval in seconds, default 1\n"
             "  -b, --buffer-mb <mb>       Buffer size per thread in MB, default 100\n"
             "  -a, --access <mode>        Access mode: random|seq, default random\n"
             "  -L, --latency-sweep        Print latency vs bandwidth table (MLC-like)\n"
@@ -547,7 +547,7 @@ int main(int argc, char **argv) {
         .cores = NULL,
         .num_cores = 0,
         .duration_sec = 10,
-        .interval_ms = 1000,
+        .interval_sec = 1,
         .read_percent = 50,
         .per_thread_buffer_bytes = 100UL * 1024UL * 1024UL,
         .random_access = true,
@@ -563,7 +563,7 @@ int main(int argc, char **argv) {
         {"cores", required_argument, NULL, 'c'},
         {"read-percent", required_argument, NULL, 'r'},
         {"time", required_argument, NULL, 't'},
-        {"interval-ms", required_argument, NULL, 'i'},
+        {"interval", required_argument, NULL, 'i'},
         {"buffer-mb", required_argument, NULL, 'b'},
         {"access", required_argument, NULL, 'a'},
         {"latency-sweep", no_argument, NULL, 'L'},
@@ -608,10 +608,10 @@ int main(int argc, char **argv) {
             case 'i': {
                 int v = parse_nonneg_int(optarg, "interval");
                 if (v <= 0) {
-                    fprintf(stderr, "--interval-ms/-i must be > 0\n");
+                    fprintf(stderr, "--interval/-i must be > 0\n");
                     return 1;
                 }
-                cfg.interval_ms = v;
+                cfg.interval_sec = v;
                 break;
             }
             case 'b': {
@@ -836,9 +836,9 @@ int main(int argc, char **argv) {
     for (int i = 0; i < cfg.num_cores; i++) {
         printf("%d%s", cfg.cores[i], (i == cfg.num_cores - 1) ? "" : ",");
     }
-    printf(" | read:write=%d:%d | access=%s | duration=%ds | interval=%dms | per_thread_buffer=%zuMB | total_buffer=%zuMB\n",
+    printf(" | read:write=%d:%d | access=%s | duration=%ds | interval=%ds | per_thread_buffer=%zuMB | total_buffer=%zuMB\n",
            cfg.read_percent, 100 - cfg.read_percent, cfg.random_access ? "random" : "seq",
-           cfg.duration_sec, cfg.interval_ms,
+           cfg.duration_sec, cfg.interval_sec,
            cfg.per_thread_buffer_bytes / (1024UL * 1024UL),
            (cfg.per_thread_buffer_bytes * (size_t)cfg.num_cores) / (1024UL * 1024UL));
     printf("time_s,inst_bw_GBps,total_bytes_GB\n");
@@ -856,7 +856,7 @@ int main(int argc, char **argv) {
     uint64_t total_bytes = 0ULL;
 
     while (true) {
-        usleep((useconds_t)cfg.interval_ms * 1000U);
+        sleep((unsigned int)cfg.interval_sec);
         uint64_t now = now_ns();
 
         total_bytes = 0ULL;

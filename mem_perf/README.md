@@ -1,6 +1,6 @@
 # mem_perf
 
-`mem_perf` is a standalone memory benchmark tool inspired by `mlc --max_bandwidth`.
+`mem_perf` is an open-source memory benchmark tool inspired by `Intel mlc`.
 
 ## Features
 
@@ -20,7 +20,7 @@ make
 ## Standard Bandwidth Run
 
 ```bash
-./mem_perf -t 100 -r 100 -i 10000 -a seq
+./mem_perf -t 100 -r 100 -i 10 -a seq
 ```
 
 Arguments:
@@ -28,7 +28,7 @@ Arguments:
 - `--cores` or `-c`: core list, e.g. `0,2,4-7` (default: all available cores)
 - `--read-percent` or `-r`: read ratio `[0,100]` (default: `50`)
 - `--time` or `-t`: run seconds (default: `10`)
-- `--interval-ms` or `-i`: realtime print interval in ms (default: `1000`)
+- `--interval` or `-i`: realtime print interval in seconds (default: `1`)
 - `--buffer-mb` or `-b`: per-thread buffer size in MB (default: `100`)
 - `--access` or `-a`: `random` or `seq` (default: `random`)
 
